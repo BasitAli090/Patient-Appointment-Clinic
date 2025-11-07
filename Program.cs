@@ -46,9 +46,13 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// Map default route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+
+// Map root URL to Dashboard
+app.MapGet("/", () => Results.Redirect("/Dashboard"));
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())
