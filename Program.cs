@@ -34,6 +34,9 @@ else
     app.UseDeveloperExceptionPage();
 }
 
+// Add detailed error page for 404
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
+
 // Enable HTTPS redirection in production
 if (app.Environment.IsProduction())
 {
@@ -46,12 +49,15 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// Map controllers first
+app.MapControllers();
+
 // Map default route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
-// Map root URL to Dashboard
+// Map root URL to Dashboard (must be after controller routes)
 app.MapGet("/", () => Results.Redirect("/Dashboard"));
 
 // Ensure database is created
