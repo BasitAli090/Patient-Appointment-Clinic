@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Doctor Appointment Management System for Dr. Umar Farooq and Dr. Samreen Malik">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Appointments">
+    <title>Doctor Appointment System</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="theme-toggle-container">
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+    </div>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>🏥 Doctor Appointment System</h1>
+                <div class="header-stats">
+                    <div class="stat-card">
+                        <span class="stat-icon">📅</span>
+                        <div>
+                            <span class="stat-value" id="totalAppointments">0</span>
+                            <span class="stat-label">Total</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">📋</span>
+                        <div>
+                            <span class="stat-value" id="todayAppointments">0</span>
+                            <span class="stat-label">Today</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <button class="btn-modern btn-today" onclick="openTodayModal()">
+                    <span>📋</span> Today's List
+                </button>
+                <button class="btn-modern btn-reset" onclick="openResetModal()">
+                    <span>🔄</span> Reset
+                </button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-doctor="umar">Dr. Umar Farooq</button>
+            <button class="tab-btn" data-doctor="samreen">Dr. Samreen Malik</button>
+        </div>
+
+        <!-- Dr. Umar Farooq Section -->
+        <div class="doctor-section active" id="umar-section">
+            <div class="section-header">
+                <div class="doctor-title-wrapper">
+                    <h2>👨‍⚕️ Dr. Umar Farooq</h2>
+                    <div class="info-badges">
+                        <span class="appointment-count" id="umar-count">0 appointments</span>
+                        <span class="next-number-badge" id="umar-next-number">
+                            <span class="badge-icon">🔢</span> Next: #<span id="umar-next">-</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="section-actions">
+                    <div class="search-box">
+                        <input type="text" id="umar-search" placeholder="🔍 Search patients..." oninput="filterAppointments('umar', this.value)">
+                    </div>
+                    <button class="btn-add-modern" onclick="openAddModal('umar')">
+                        <span>➕</span> Add Appointment
+                    </button>
+                </div>
+            </div>
+            <div class="appointments-list" id="umar-appointments"></div>
+        </div>
+
+        <!-- Dr. Samreen Malik Section -->
+        <div class="doctor-section" id="samreen-section">
+            <div class="section-header">
+                <div class="doctor-title-wrapper">
+                    <h2>👩‍⚕️ Dr. Samreen Malik</h2>
+                    <div class="info-badges">
+                        <span class="appointment-count" id="samreen-count">0 appointments</span>
+                        <span class="next-number-badge" id="samreen-next-number">
+                            <span class="badge-icon">🔢</span> Next: #<span id="samreen-next">-</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="section-actions">
+                    <div class="search-box">
+                        <input type="text" id="samreen-search" placeholder="🔍 Search patients..." oninput="filterAppointments('samreen', this.value)">
+                    </div>
+                    <button class="btn-add-modern" onclick="openAddModal('samreen')">
+                        <span>➕</span> Add Appointment
+                    </button>
+                </div>
+            </div>
+            <div class="appointments-list" id="samreen-appointments"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Add/Edit Appointment Modal -->
+    <div class="modal" id="appointmentModal">
+        <div class="modal-content modern-modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">➕ Add Appointment</h2>
+            </div>
+            <form id="appointmentForm">
+                <div class="form-group modern-form-group">
+                    <label for="appointmentNo">
+                        <span class="label-icon">🔢</span> Appointment Number
+                    </label>
+                    <input type="number" id="appointmentNo" readonly class="modern-input">
+                    <small class="info-text">✨ Auto-generated</small>
+                </div>
+                <div class="form-group modern-form-group">
+                    <label for="patientName">
+                        <span class="label-icon">👤</span> Patient Name
+                    </label>
+                    <input type="text" id="patientName" required class="modern-input" placeholder="Enter patient name...">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-modern btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-modern btn-save">💾 Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Today Appointment List Modal -->
+    <div class="modal" id="todayModal">
+        <div class="modal-content modal-large">
+            <span class="close" onclick="closeTodayModal()">&times;</span>
+            <h2>Today's Appointments</h2>
+            <p class="today-date" id="todayDate"></p>
+            <div class="today-appointments-container">
+                <div class="today-doctor-section">
+                    <h3>Dr. Umar Farooq</h3>
+                    <div class="today-appointments-list" id="today-umar-list"></div>
+                </div>
+                <div class="today-doctor-section">
+                    <h3>Dr. Samreen Malik</h3>
+                    <div class="today-appointments-list" id="today-samreen-list"></div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeTodayModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yesterday Appointment List Modal -->
+    <div class="modal" id="yesterdayModal">
+        <div class="modal-content modal-large">
+            <span class="close" onclick="closeYesterdayModal()">&times;</span>
+            <h2>Yesterday's Appointments</h2>
+            <p class="today-date" id="yesterdayDate"></p>
+            <div class="today-appointments-container">
+                <div class="today-doctor-section">
+                    <h3>Dr. Umar Farooq</h3>
+                    <div class="today-appointments-list" id="yesterday-umar-list"></div>
+                </div>
+                <div class="today-doctor-section">
+                    <h3>Dr. Samreen Malik</h3>
+                    <div class="today-appointments-list" id="yesterday-samreen-list"></div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeYesterdayModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Appointment Password Modal -->
+    <div class="modal" id="resetModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeResetModal()">&times;</span>
+            <h2>Reset All Appointments</h2>
+            <p class="warning-text">⚠️ This will delete ALL appointments for both doctors. This action cannot be undone.</p>
+            <form id="resetForm">
+                <div class="form-group">
+                    <label for="resetPassword">Enter Password:</label>
+                    <input type="password" id="resetPassword" required autocomplete="off">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeResetModal()">Cancel</button>
+                    <button type="submit" class="btn-reset-confirm">Reset All</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

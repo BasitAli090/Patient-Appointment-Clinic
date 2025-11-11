@@ -2,18 +2,41 @@
   "version": 2,
   "builds": [
     {
-      "src": "ClinicAppointmentSystem.csproj",
-      "use": "@vercel/dotnet"
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "."
+      }
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/"
+      "dest": "/$1"
     }
   ],
-  "env": {
-    "ASPNETCORE_ENVIRONMENT": "Production"
-  }
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ]
 }
 

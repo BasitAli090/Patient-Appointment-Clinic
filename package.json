@@ -1,0 +1,29 @@
+{
+  "name": "doctor-appointment-system",
+  "version": "1.0.0",
+  "description": "Doctor Appointment Management System",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8080 -c-1",
+    "build": "echo 'Build complete'",
+    "electron": "electron .",
+    "electron-dev": "electron . --dev",
+    "vercel-build": "echo 'Vercel build complete'"
+  },
+  "keywords": [
+    "appointment",
+    "doctor",
+    "medical",
+    "pwa"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "http-server": "^14.1.1"
+  }
+}
+
